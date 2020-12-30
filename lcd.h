@@ -48,17 +48,15 @@
 extern "C" {
 #endif
     
-#if (__GNUC__ * 100 + __GNUC_MINOR__) < 303
-#error "This library requires AVR-GCC 3.3 or later, update to newer AVR-GCC compiler !"
-#endif
+
     
 #include <inttypes.h>
-#include <avr/pgmspace.h>
+//#include <avr/pgmspace.h>
 
 	/* TODO: define bus */
-#define I2C			// I2C or SPI	
+//#define I2C			// I2C or SPI	
     /* TODO: define displaycontroller */
-#define SH1106                 // or SSD1306, check datasheet of your display
+#define SSD1306                 // or SSD1306, check datasheet of your display
     /* TODO: define displaymode */
 #define TEXTMODE                // TEXTMODE for only text to display,
     // GRAPHICMODE for text and graphic
@@ -69,14 +67,14 @@ extern "C" {
     
     // using 7-bit-adress for lcd-library
     // if you use your own library for twi check I2C-adress-handle
-#define LCD_I2C_ADR         (0x7a >> 1)    // 7 bit slave-adress without r/w-bit
+#define LCD_I2C_ADR         0x3c    // 7 bit slave-adress without r/w-bit
     // r/w-bit are set/unset by library
     // e.g. 8 bit slave-adress:
     // 0x78 = adress 0x3C with cleared r/w-bit (write-mode)
 
     
 #ifdef I2C
-#include "i2c.h"	// library for I2C-communication
+//#include "i2c.h"	// library for I2C-communication
     // if you want to use other lib for I2C
     // edit i2c_xxx commands in this library
     // i2c_start(), i2c_byte(), i2c_stop()
@@ -105,7 +103,7 @@ extern "C" {
 #define BLACK            0x00
     
 #define DISPLAY_WIDTH        128
-#define DISPLAY_HEIGHT        64
+#define DISPLAY_HEIGHT        32
     
     
     

@@ -44,6 +44,18 @@
  *  2 bytes (cursorPosition)
  */
 
+#include "platform.h"
+#include "platform_conf.h"
+#include "console.h"
+
+#define PROGMEM
+#define pgm_read_byte(b) *(b)
+
+#undef SPI
+#undef I2C
+#define USE_ELUA
+#define I2C_NUM 0 // TODO: Make configurable
+
 #include "lcd.h"
 #include "font.h"
 #include <string.h>
@@ -105,7 +117,7 @@ void lcd_command(uint8_t cmd[], uint8_t size) {
     i2c_start((LCD_I2C_ADR << 1) | 0);
     i2c_byte(0x00);    // 0x00 for command, 0x40 for data
     for (uint8_t i=0; i<size; i++) {
-        i2c_byte(cmd[i]);
+        i2c_byte(cmd[i]);       
     }
     i2c_stop();
 #elif defined SPI
@@ -116,8 +128,19 @@ void lcd_command(uint8_t cmd[], uint8_t size) {
         while(!(SPSR & (1<<SPIF)));
     }
     LCD_PORT |= (1 << CS_PIN);
+#elif defined USE_ELUA
+    platform_i2c_send_start( I2C_NUM );
+    platform_i2c_send_address( I2C_NUM,LCD_I2C_ADR,PLATFORM_I2C_DIRECTION_TRANSMITTER );
+    platform_i2c_send_byte(I2C_NUM,0x00);
+    for (uint8_t i=0; i<size; i++) {
+        platform_i2c_send_byte(I2C_NUM,cmd[i]);
+        //printk("oc:%2x\n",cmd[i]);
+    }
+    platform_i2c_send_stop(I2C_NUM);
+
 #endif
 }
+
 void lcd_data(uint8_t data[], uint16_t size) {
 #if defined I2C
     i2c_start((LCD_I2C_ADR << 1) | 0);
@@ -134,8 +157,21 @@ void lcd_data(uint8_t data[], uint16_t size) {
         while(!(SPSR & (1<<SPIF)));
     }
     LCD_PORT |= (1 << CS_PIN);
+
+#elif defined USE_ELUA
+    platform_i2c_send_start( I2C_NUM );
+    platform_i2c_send_address( I2C_NUM,LCD_I2C_ADR,PLATFORM_I2C_DIRECTION_TRANSMITTER );
+    platform_i2c_send_byte(I2C_NUM,0x40);
+    for (uint8_t i=0; i<size; i++) {
+        platform_i2c_send_byte(I2C_NUM,data[i]);
+        //printk("od:%2x\n",data[i]);
+    }
+    platform_i2c_send_stop(I2C_NUM);
+
 #endif
 }
+
+
 #pragma mark -
 #pragma mark GENERAL FUNCTIONS
 void lcd_init(uint8_t dispAttr){
@@ -149,6 +185,8 @@ void lcd_init(uint8_t dispAttr){
     LCD_PORT &= ~(1 << RES_PIN);
     _delay_ms(10);
     LCD_PORT |= (1 << RES_PIN);
+#elif defined USE_ELUA
+    platform_i2c_setup(I2C_NUM,100000); // TODO: Make speed configurable     
 #endif
 
     uint8_t commandSequence[sizeof(init_sequence)+1];

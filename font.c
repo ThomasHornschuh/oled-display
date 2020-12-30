@@ -6,6 +6,8 @@
  *  Copyright 2018 Skie-Systems. All rights reserved.
  *
  */
+#define PROGMEM
+
 #include "font.h"
 
 const char ssd1306oled_font[][6] PROGMEM = {

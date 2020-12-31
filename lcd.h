@@ -58,7 +58,7 @@ extern "C" {
     /* TODO: define displaycontroller */
 #define SSD1306                 // or SSD1306, check datasheet of your display
     /* TODO: define displaymode */
-#define TEXTMODE                // TEXTMODE for only text to display,
+#define GRAPHICMODE                // TEXTMODE for only text to display,
     // GRAPHICMODE for text and graphic
     /* TODO: define font */
 #define FONT            ssd1306oled_font// set font here, refer font-name at font.h/font.c
@@ -107,8 +107,8 @@ extern "C" {
     
     
     
-    void lcd_command(uint8_t cmd[], uint8_t size);    // transmit command to display
-    void lcd_data(uint8_t data[], uint16_t size);    // transmit data to display
+    void lcd_command(uint8_t cmd[], int size);    // transmit command to display
+    void lcd_data(uint8_t data[], int size);    // transmit data to display
     void lcd_init(uint8_t dispAttr);
     void lcd_home(void);                            // set cursor to 0,0
     void lcd_invert(uint8_t invert);        // invert display

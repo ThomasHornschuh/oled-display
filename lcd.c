@@ -112,7 +112,7 @@ const uint8_t init_sequence [] PROGMEM = {    // Initialization Sequence
     
 };
 #pragma mark LCD COMMUNICATION
-void lcd_command(uint8_t cmd[], uint8_t size) {
+void lcd_command(uint8_t cmd[], int size) {
 #if defined I2C
     i2c_start((LCD_I2C_ADR << 1) | 0);
     i2c_byte(0x00);    // 0x00 for command, 0x40 for data
@@ -132,7 +132,7 @@ void lcd_command(uint8_t cmd[], uint8_t size) {
     platform_i2c_send_start( I2C_NUM );
     platform_i2c_send_address( I2C_NUM,LCD_I2C_ADR,PLATFORM_I2C_DIRECTION_TRANSMITTER );
     platform_i2c_send_byte(I2C_NUM,0x00);
-    for (uint8_t i=0; i<size; i++) {
+    for (int i=0; i<size; i++) {
         platform_i2c_send_byte(I2C_NUM,cmd[i]);
         //printk("oc:%2x\n",cmd[i]);
     }
@@ -141,7 +141,7 @@ void lcd_command(uint8_t cmd[], uint8_t size) {
 #endif
 }
 
-void lcd_data(uint8_t data[], uint16_t size) {
+void lcd_data(uint8_t data[], int size) {
 #if defined I2C
     i2c_start((LCD_I2C_ADR << 1) | 0);
     i2c_byte(0x40);    // 0x00 for command, 0x40 for data
@@ -162,7 +162,7 @@ void lcd_data(uint8_t data[], uint16_t size) {
     platform_i2c_send_start( I2C_NUM );
     platform_i2c_send_address( I2C_NUM,LCD_I2C_ADR,PLATFORM_I2C_DIRECTION_TRANSMITTER );
     platform_i2c_send_byte(I2C_NUM,0x40);
-    for (uint8_t i=0; i<size; i++) {
+    for (int i=0; i<size; i++) {
         platform_i2c_send_byte(I2C_NUM,data[i]);
         //printk("od:%2x\n",data[i]);
     }
